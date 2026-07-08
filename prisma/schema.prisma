@@ -1,7 +1,3 @@
-// Motivation Tasker - Prisma Schema
-// 設計メモのER図（User 1-n Category, User 1-n Task, Category 1-n Task）に加え、
-// 依頼要件の isCompleted / motivation_level / urgency_level / createdAt を反映しています。
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -14,45 +10,29 @@ datasource db {
 model User {
   id           Int        @id @default(autoincrement())
   name         String
-  totalPoints  Int        @default(0) @map("total_points")
-
+  total_points Int        @default(0)
   categories   Category[]
   tasks        Task[]
-
-  @@map("users")
 }
 
 model Category {
-  id     Int    @id @default(autoincrement())
-  name   String
-
-  userId Int    @map("user_id")
-  user   User   @relation(fields: [userId], references: [id])
-
-  tasks  Task[]
-
-  @@map("categories")
+  id      Int    @id @default(autoincrement())
+  name    String
+  user_id Int
+  user    User   @relation(fields: [user_id], references: [id])
+  tasks   Task[]
 }
 
 model Task {
   id               Int      @id @default(autoincrement())
   title            String
-
-  // 依頼要件の必須フィールド
-  isCompleted      Boolean  @default(false) @map("is_completed")
-  motivationLevel  Int      @map("motivation_level") // 1-5: このタスクに必要な「やる気」
-  urgencyLevel     Int      @map("urgency_level")     // 1-5: ヤバ度（緊急度）
-  createdAt        DateTime @default(now()) @map("created_at")
-
-  // 設計メモのER図を補完するフィールド
-  deadline         DateTime?
-  status           String   @default("TODO") // TODO / DONE / EXPIRED
-
-  categoryId       Int      @map("category_id")
+  deadline         DateTime
+  urgencyLevel     Int      @default(1)
+  motivationLevel  Int      @default(1)
+  isCompleted      Boolean  @default(false)
+  categoryId       Int
   category         Category @relation(fields: [categoryId], references: [id])
-
-  userId           Int      @map("user_id")
+  userId           Int
   user             User     @relation(fields: [userId], references: [id])
-
-  @@map("tasks")
+  createdAt        DateTime @default(now())
 }
