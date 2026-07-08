@@ -2,13 +2,13 @@
 // 設計メモのER図（User 1-n Category, User 1-n Task, Category 1-n Task）に加え、
 // 依頼要件の isCompleted / motivation_level / urgency_level / createdAt を反映しています。
 
-datasource db {
-  provider = "postgresql"
-}
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
 }
 
 model User {
