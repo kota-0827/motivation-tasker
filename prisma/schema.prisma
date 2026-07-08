@@ -4,7 +4,6 @@
 
 datasource db {
   provider = "postgresql"
-  // url は書かず、.env の DATABASE_URL を使うのが Prisma 7 のお作法じゃ
 }
 
 generator client {
