@@ -2,13 +2,14 @@
 // 設計メモのER図（User 1-n Category, User 1-n Task, Category 1-n Task）に加え、
 // 依頼要件の isCompleted / motivation_level / urgency_level / createdAt を反映しています。
 
-generator client {
-  provider = "prisma-client-js"
+datasource db {
+  provider = "postgresql"
+  // url は書かず、.env の DATABASE_URL を使うのが Prisma 7 のお作法じゃ
 }
 
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 model User {

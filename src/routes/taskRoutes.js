@@ -20,6 +20,43 @@ router.get("/tasks", async (req, res) => {
 });
 
 /**
+ * GET /users/:userId/tasks
+ * 指定したユーザーIDに紐づくタスクを全件取得する（フィルタなし）。
+ */
+router.get("/users/:userId/tasks", async (req, res) => {
+  try {
+    const userId = Number(req.params.userId);
+
+    if (!Number.isInteger(userId) || userId <= 0) {
+      return res
+        .status(400)
+        .json({ error: "userId は正の整数で指定してください。" });
+    }
+
+    const tasks = await taskService.getTasksByUserId(userId);
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error("[GET /users/:userId/tasks] error:", error);
+    res.status(500).json({ error: "タスク一覧の取得に失敗しました。" });
+  }
+});
+
+/**
+ * GET /tasks/mine
+ * currentUser ミドルウェアが決定した「今のユーザー」のタスクを取得する。
+ * ログイン機能がまだ無い間の暫定エンドポイント。
+ */
+router.get("/tasks/mine", async (req, res) => {
+  try {
+    const tasks = await taskService.getTasksByUserId(req.currentUserId);
+    res.status(200).json({ actingAsUserId: req.currentUserId, tasks });
+  } catch (error) {
+    console.error("[GET /tasks/mine] error:", error);
+    res.status(500).json({ error: "タスク一覧の取得に失敗しました。" });
+  }
+});
+
+/**
  * GET /tasks/recommend?level=3
  * 指定した「やる気レベル」以下で、最もヤバ度が高いタスクを1件返す。
  */
